@@ -32,6 +32,8 @@ Patoloji uzmanları ve asistanlarının zor morfolojik desenlerde daha tutarlı 
 4. Sonuç alanında otomatik skor ve gerekçeyi gör.
 5. Gerektiğinde **not ekle** ve **sonucu panoya kopyala** veya **TXT olarak dışa aktar**.
 
+**Demo:** [Demo](https://metinciris.github.io/tubul-skorlama/)  
+
 ---
 
 ## 📚 Kaynak
@@ -65,5 +67,5 @@ Klinik karar destek sistemi değildir, ancak **rehber materyal** olarak kullanı
 ---
 
 **Lisans:** MIT  
-**Yazan:** [@metinpatoloji](https://github.com/metinpatoloji)  
+
 **Yıl:** 2025

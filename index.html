@@ -1,67 +1,327 @@
-# README - NGS Gland/Tubule Scoring Helper
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NGS Gland/Tubule Scoring Helper</title>
+  <style>
+    :root{
+      --bg:#f5f7fb; --card:#ffffff; --ink:#111827; --muted:#6b7280; --accent:#2563eb; --ok:#059669; --warn:#d97706; --bad:#dc2626;
+      --ring: rgba(37,99,235,.15);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:#f5f7fb;color:var(--ink);font:500 16px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial} 
+    .wrap{max-width:980px;margin:28px auto;padding:16px}
+    .title{display:flex;gap:12px;align-items:center}
+    h1{font-size:24px;margin:0}
+    .chip{padding:4px 10px;border-radius:999px;background:#192540;color:var(--muted);font-size:12px;border:1px solid #203158}
+    .grid{display:grid;gap:16px}
+    @media(min-width:800px){.grid{grid-template-columns:1fr 1fr}}
+    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(17,24,39,.06)}
+    .card h2{margin:0 0 8px;font-size:18px}
+    .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+    .bgroup{display:flex;flex-wrap:wrap;gap:8px}
+    .btn{cursor:pointer;border:1px solid #d1d5db;background:#f9fafb;color:var(--ink);padding:10px 12px;border-radius:12px;transition:.15s;user-select:none}
+    .btn:hover{border-color:#93c5fd;box-shadow:0 0 0 4px var(--ring)}
+    .btn.on{background:#e0e7ff;border-color:#93c5fd;box-shadow:inset 0 0 0 1px #2563eb}
+    .btn.bad{border-color:#fca5a5;background:#fef2f2}
+    .btn.ok{border-color:#a7f3d0;background:#ecfdf5}
+    .row{display:flex;gap:12px;align-items:center}
+    .slider{accent-color:var(--accent);width:100%}
+    .pill{background:#eef2ff;border:1px solid #e5e7eb;border-radius:999px;padding:6px 10px;color:#374151;font-size:12px}
+    .kbd{font:600 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background:#eef2ff; border:1px solid #e5e7eb; padding:2px 6px; border-radius:6px}
+    .result{font-size:32px;font-weight:800}
+    .result.small{font-size:22px}
+    .tag{display:inline-block;margin:0 6px 6px 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#f3f4f6;color:#374151;font-size:12px}
+    details{border:1px solid #e5e7eb;background:#ffffff;border-radius:12px;padding:10px}
+    details summary{cursor:pointer;color:#c6d6ff}
+    .muted{color:var(--muted)}
+    .footer{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+    .linkbtn{cursor:pointer;padding:10px 12px;border-radius:12px;background:#ffffff;border:1px solid #e5e7eb;color:#1f2937;text-decoration:none}
+    .linkbtn:hover{box-shadow:0 0 0 4px var(--ring); transform: translateY(-1px);}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .badc{color:var(--bad)}
+    .callout{border-left:4px solid #2563eb;background:#eff6ff;padding:12px;border-radius:8px}
+    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="title">
+      <h1>NGS Gland/Tubule Scoring Helper</h1>
+      <span class="chip">Hızlı tıklama · Zor vaka modları</span>
+    </div>
 
-Bu proje, **Nottingham Grading System (NGS)** kapsamında glandüler/tübül formasyonunun (G/TF) değerlendirilmesini kolaylaştırmak için geliştirilmiş **interaktif HTML tabanlı bir yardımcı araçtır**.  
-Patoloji uzmanları ve asistanlarının zor morfolojik desenlerde daha tutarlı skorlamalar yapmasına yardımcı olur.
+    <div class="grid" id="app">
+      <!-- Plan Card (first) -->
+      <section class="card" style="grid-column:1 / -1">
+        <h2>Hızlı Plan (Önce Oku)</h2>
+        <ol class="sub" style="font-size:15px;color:#374151">
+          <li>Tümörü <b>düşük büyütmede</b> tara, baskın paternleri zihninde haritala.</li>
+          <li><b>Dahil</b> (lümen/polarizasyon, cribriform, müsinöz, inverted tubule) ve <b>hariç</b> (nekroz, artefakt, papiller, intrasitoplazmik vakuol) kriterlerini tıkla.</li>
+          <li>G/TF içeren alanın <b>oranını</b> seç: &gt;75%→1, 10–75%→2, &lt;10%→3.</li>
+          <li>Skor ve gerekçeyi kontrol et; notunu yaz.</li>
+          <li>Raporuna eklemek için <b>kopyala / dışa aktar</b> kullan.</li>
+        </ol>
+        <div class="callout" style="margin-top:8px">
+          <b>Zor vaka ipuçları (her zaman görünür):</b>
+          <ul style="margin:6px 0 0 18px;color:#374151">
+            <li><b>Cribriform</b> ve <b>müsinöz</b> yapılar G/TF kabul edilir; kutupluluk kusursuz olmayabilir.</li>
+            <li><b>Mikropapiller “inverted tubule”</b>: içeride boşluk varsa G/TF; <b>solid ters kutuplu adacık</b> G/TF değildir.</li>
+            <li><b>Nekroz</b> kaynaklı boşluklar, <b>artefakt</b> çekilmeleri ve <b>papiller</b> yapılar G/TF değildir.</li>
+            <li><b>Yüksek nükleer grade</b> G/TF’yi dışlamaz.</li>
+          </ul>
+        </div>
+      </section>
+      <!-- Step 1 -->
+      <section class="card">
+        <h2>1) Yapı Tanımı</h2>
+        <p class="sub">Aşağıdaki özellikleri <b>gözlediğiniz</b> alan için işaretleyin. (Birden çok seçilebilir)</p>
+        <div class="bgroup" id="includeGroup"></div>
+        <p class="sub" style="margin-top:10px">G/TF <b>değil</b> sayılacak durumlar</p>
+        <div class="bgroup" id="excludeGroup"></div>
+        <div class="callout" style="margin-top:12px">
+          <b>Not:</b> Yüksek nükleer grade veya mitoz sıklığı <span class="muted">G/TF varlığını dışlamaz</span>. Değerlendirme morfolojiye dayanır.
+        </div>
+      </section>
 
----
+      <!-- Step 2 -->
+      <section class="card">
+        <h2>2) G/TF Oranı</h2>
+        <p class="sub">Tümör bütününde gland/tübül içeren alan oranını tahmin edin.</p>
+        <div class="row">
+          <input type="range" min="0" max="100" value="50" class="slider" id="pct" />
+        </div>
+        <div class="row" style="justify-content:space-between;margin-top:8px">
+          <span class="pill"><span class="kbd">0–9%</span> Az (&lt;10%)</span>
+          <span class="pill"><span class="kbd">10–75%</span> Orta</span>
+          <span class="pill"><span class="kbd">&gt;75%</span> Yaygın</span>
+        </div>
+        <p class="sub">Seçili oran: <b id="pctVal">50%</b></p>
+        <div class="bgroup" id="quickPcts"></div>
+      </section>
 
- 🎯 Amaç
-- G/TF tanımlamasındaki belirsizlikleri azaltmak.
-- Genişletilmiş açıklamayı (cribriform, müsinöz, mikropapiller paternler dahil) pratik olarak kullanmak.
-- Zor vakalarda hızlı karar destek aracı olarak kullanılmak.
+      <!-- Step 3 -->
+      <section class="card" style="grid-column:1 / -1">
+        <h2>3) Skor ve Gerekçe</h2>
+        <div class="row" style="justify-content:space-between;align-items:flex-end">
+          <div>
+            <div class="result" id="score">Skor: 2</div>
+            <div class="muted" id="scoreExplain">Oran: %50 · Dahil edilen paternler: cribriform</div>
+          </div>
+          <div class="row">
+            <button class="btn" id="copy">Sonucu kopyala</button>
+            <button class="btn" id="reset">Sıfırla</button>
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <span class="tag" id="tag-gtf">G/TF bekleniyor</span>
+          <span class="tag" id="tag-risk">Zor vaka: müsinöz / mikropapiller olabilir</span>
+        </div>
+        <div class="callout" style="margin-top:12px">
+          <b>Zor vaka ipuçları</b>
+          <ul class="muted" style="color:#374151">
+            <li><b>Cribriform</b> ve <b>müsinöz</b> paternler sıklıkla G/TF kabul edilir; polarizasyon kusursuz olmak zorunda değildir.</li>
+            <li><b>Mikropapiller “inverted tubule”</b>: iç boşluk varsa G/TF kabul edilir. Solid ters kutuplu adacıklar G/TF değildir.</li>
+            <li><b>Nekroz</b> kaynaklı boşluklar, <b>artefakt</b> aralıkları ve <b>papiller</b> yapılar G/TF değildir.</li>
+            <li><b>Yüksek nükleer grade/mitoz</b> varlığı G/TF değerlendirmesini değiştirmez.</li>
+          </ul>
+        </div>
+        <div class="footer">
+          <a class="linkbtn" href="#" id="save">Kaydet (tarayıcıda)</a>
+          <a class="linkbtn" href="#" id="load">Yükle</a>
+          <a class="linkbtn" href="#" id="export">TXT dışa aktar</a>
+        </div>
+      </section>
 
----
+      <!-- Microscopic Types -->
+      <section class="card" style="grid-column:1 / -1">
+        <h2>Mikroskopik Tipler ve Literatür Özellikleri</h2>
+        <div class="sub" style="font-size:15px;color:#374151">Genişletilmiş G/TF tanımı ve doğrulama çalışmasının bulgularına göre özet.</div>
+        <ul style="margin-top:10px;color:#374151">
+          <li><b>Basit tübül/acinus:</b> Açık lümen, çevresinde (kısmi de olsa) polarize tümör hücreleri. Genelde düşük/orta nükleer grade ile yüksek uyum.</li>
+          <li><b>Kompleks/Cribriform:</b> Adacık içinde birden çok yuvarlak/oval lümen; lümenler üç boyutta küresel olabilir; çoğu durumda G/TF kabul edilir.</li>
+          <li><b>Müsinöz:</b> Lümenler sıklıkla belirgin polarizasyon göstermez; buna rağmen lümen varlığıyla G/TF olarak değerlendirilir; sınıflamada zorlayıcı olabilir.</li>
+          <li><b>Mikropapiller (inverted tubule):</b> Hücre apeksleri dışa bakar; <u>iç boşluk</u> varsa G/TF; sadece ters kutuplu <u>solid</u> kümeler G/TF <b>değildir</b>.</li>
+          <li><b>Yüksek nükleer grade’li lümenler:</b> Grade yüksek olsa da lümen/polarizasyon mevcutsa G/TF kabul edilir.</li>
+          <li><b>Non-G/TF – solid + nekroz:</b> Merkez nekrozla oluşan boşluklar tipik olarak G/TF <b>değildir</b> (gerçek lümen içinde nekrotik debris nadir).</li>
+          <li><b>Non-G/TF – papiller:</b> Fibrovasküler kor içeren papiller yapılar G/TF <b>değildir</b>.</li>
+          <li><b>Non-G/TF – artefakt (retraksiyon):</b> Fiksasyon/işleme kaynaklı çekilme aralıkları G/TF <b>değildir</b>.</li>
+          <li><b>Non-G/TF – intrasitoplazmik lümen/vakuol:</b> “Signet-ring” benzeri vakuoller G/TF <b>değildir</b>.</li>
+        </ul>
+      </section>
 
- ⚙️ Özellikler
-- ✅ **Tıklanabilir kriter seçimi:** Dahil ve hariç morfolojik özellikler interaktif olarak seçilir.
-- 🎚️ **Oran seçici:** G/TF oranını sürgü veya hızlı yüzde tuşlarıyla seç.
-- 📊 **Otomatik skor hesaplama:** 1–3 arası NGS puanı anında hesaplanır.
-- 💾 **Kaydet / Yükle / Dışa Aktar:** Tarayıcıda saklama ve TXT olarak dışa aktarma.
-- 📘 **Zor vaka ipuçları:** Her zaman görünür; özellikle cribriform, müsinöz ve mikropapiller desenlerde rehberlik sağlar.
-- 🧬 **Mikroskopik tip listesi:** Literatürden özetlenmiş patern özellikleri.
-- ☀️ **Açık tema:** Klinik ve laboratuvar ortamlarında okunabilirlik için optimize edilmiştir.
+      <!-- Notes -->
+      <section class="card" style="grid-column:1 / -1">
+        <h2>Serbest Not</h2>
+        <textarea id="notes" rows="5" style="width:100%;background:#0e1628;border:1px solid #223256;border-radius:12px;color:var(--ink);padding:10px;font:500 14px ui-sans-serif"></textarea>
+      </section>
+    </div>
+  </div>
 
----
+  <script>
+    // --- Config ---
+    const INCLUDE = [
+      {id:'luminal', label:'Lümen mevcut'},
+      {id:'polarity', label:'Polarizasyon (+/kısmi)'},
+      {id:'crib', label:'Cribriform'},
+      {id:'mucin', label:'Müsinöz'},
+      {id:'invTub', label:'Mikropapiller “inverted tubule”'},
+    ];
+    const EXCLUDE = [
+      {id:'nec', label:'Nekroz kaynaklı boşluk'},
+      {id:'artifact', label:'Artefakt/çekilme boşluğu'},
+      {id:'pap', label:'Papiller yapı'},
+      {id:'icVac', label:'İntrasitoplazmik vakuol (signet-ring)'}
+    ];
 
- 🧠 Kullanım
-1. `index.html` dosyasını tarayıcıda aç.
-2. İncelediğin tümör için uygun morfolojik kriterleri tıkla.
-3. Tümördeki G/TF oranını sürgü veya hızlı tuşlarla belirle.
-4. Sonuç alanında otomatik skor ve gerekçeyi gör.
-5. Gerektiğinde **not ekle** ve **sonucu panoya kopyala** veya **TXT olarak dışa aktar**.
+    const qs = s => document.querySelector(s);
+    const qsa = s => Array.from(document.querySelectorAll(s));
 
----
+    // Build buttons
+    const includeGroup = qs('#includeGroup');
+    const excludeGroup = qs('#excludeGroup');
 
-## 📚 Kaynak
-Bu uygulama, aşağıdaki çalışmanın bulgularına dayanır:
-> Karakas C, Aldrees R, Mohamed A, et al. *A Validation Study of an Expanded Description of Glandular (Acinar)/Tubule Formation for the Use of the Nottingham Grading System for Invasive Breast Carcinomas*. **Arch Pathol Lab Med.** 2025; doi:10.5858/arpa.2025-0280-OA.
+    function makeBtn(item, bad=false){
+      const b = document.createElement('button');
+      b.className = 'btn' + (bad ? ' bad' : '');
+      b.textContent = item.label;
+      b.dataset.id = item.id;
+      b.addEventListener('click', ()=>{ b.classList.toggle('on'); compute();});
+      return b;
+    }
+    INCLUDE.forEach(it=> includeGroup.appendChild(makeBtn(it)));
+    EXCLUDE.forEach(it=> excludeGroup.appendChild(makeBtn(it,true)));
 
----
+    // Quick %-buttons
+    const quick = [9, 25, 50, 80, 90];
+    const quickWrap = qs('#quickPcts');
+    quick.forEach(v=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=v+'%'; b.addEventListener('click',()=>{pct.value=v; updatePct(); compute();}); quickWrap.appendChild(b); });
 
- 🧩 Dosya Yapısı
-```
-├── index.html          # Ana interaktif araç (tek dosya)
-├── README.md           # Bu belge
-```
+    // Slider
+    const pct = qs('#pct');
+    const pctVal = qs('#pctVal');
+    pct.addEventListener('input', ()=>{ updatePct(); compute(); });
+    function updatePct(){ pctVal.textContent = pct.value + '%'; }
 
----
+    // Summary
+    const scoreEl = qs('#score');
+    const scoreExplain = qs('#scoreExplain');
+    const tagGtf = qs('#tag-gtf');
+    const tagRisk = qs('#tag-risk');
 
- 🚀 Yayınlama
-Bu proje tamamen istemci tarafında çalışır, herhangi bir sunucu gerektirmez.
-GitHub Pages üzerinde yayımlamak için:
-1. Depoyu oluştur.
-2. `index.html` ve `README.md` dosyalarını ekle.
-3. GitHub Pages’i **main** dalından etkinleştir.
-4. Tarayıcıdan uygulamayı aç: `https://<kullanıcı_adı>.github.io/<repo_adı>/`
+    function compute(){
+      const inc = sel(includeGroup);
+      const exc = sel(excludeGroup);
+      const p = Number(pct.value);
 
----
+      let gtfLikely = false;
+      // Inclusion logic per expanded description
+      if( inc.has('luminal') || inc.has('crib') || inc.has('mucin') || inc.has('invTub') ) gtfLikely = true;
+      if( exc.size ) gtfLikely = gtfLikely && !exc.has('nec') && !exc.has('artifact') && !exc.has('pap') && !exc.has('icVac');
 
- 🧑‍⚕️ Geliştirici Notu
-Bu araç, patologlar için eğitim ve standartlaştırma amaçlıdır.  
-Klinik karar destek sistemi değildir, ancak **rehber materyal** olarak kullanılabilir.
+      // Score by proportion (NGS rule-of-thumb)
+      let score = 2; // default mid
+      if(p > 75) score = 1; else if(p < 10) score = 3; else score = 2;
 
----
+      // If exclusions dominate, hint non-GTF
+      if( (exc.has('nec') || exc.has('artifact') || exc.has('pap')) && !inc.has('invTub') && !inc.has('crib') && !inc.has('mucin') ){
+        tagGtf.textContent = 'G/TF beklenmeyebilir';
+      } else {
+        tagGtf.textContent = gtfLikely ? 'G/TF bekleniyor' : 'G/TF belirsiz';
+      }
+      // Risk tag
+      tagRisk.style.display = (inc.has('mucin') || inc.has('invTub')) ? 'inline-block' : 'none';
 
-**Lisans:** MIT  
-**Yazan:** [@metinpatoloji](https://github.com/metinpatoloji)  
-**Yıl:** 2025
+      // Explain
+      const incTxt = [...inc].map(id=> labelById(id)).join(', ') || '—';
+      const excTxt = [...exc].map(id=> labelById(id)).join(', ') || '—';
+      scoreEl.textContent = `Skor: ${score}`;
+      scoreExplain.textContent = `Oran: %${p} · Dahil: ${incTxt} · Hariç: ${excTxt}`;
+
+      saveDraft();
+    }
+
+    function sel(parent){
+      return new Set([...parent.querySelectorAll('.btn.on')].map(b=> b.dataset.id));
+    }
+    function labelById(id){
+      const all=[...INCLUDE,...EXCLUDE];
+      return (all.find(x=>x.id===id)||{}).label||id;
+    }
+
+    // Copy, Reset, Save/Load
+    qs('#copy').addEventListener('click', ()=>{
+      const txt = `${scoreEl.textContent}
+${scoreExplain.textContent}
+Notlar: ${qs('#notes').value || ''}`;
+      navigator.clipboard.writeText(txt).then(()=>{
+        toast('Panoya kopyalandı');
+      });
+    });
+    qs('#reset').addEventListener('click', ()=>{
+      qsa('.btn.on').forEach(b=> b.classList.remove('on'));
+      pct.value = 50; updatePct();
+      qs('#notes').value = '';
+      compute();
+    });
+
+    function saveDraft(){
+      const data = {
+        inc:[...sel(includeGroup)],
+        exc:[...sel(excludeGroup)],
+        p:Number(pct.value),
+        notes: qs('#notes').value
+      };
+      localStorage.setItem('ngs-gtf-draft', JSON.stringify(data));
+    }
+    function loadDraft(){
+      const raw = localStorage.getItem('ngs-gtf-draft');
+      if(!raw) return false;
+      try{
+        const d=JSON.parse(raw);
+        qsa('#includeGroup .btn, #excludeGroup .btn').forEach(b=> b.classList.remove('on'));
+        d.inc?.forEach(id=> includeGroup.querySelector(`[data-id="${id}"]`)?.classList.add('on'));
+        d.exc?.forEach(id=> excludeGroup.querySelector(`[data-id="${id}"]`)?.classList.add('on'));
+        pct.value = d.p ?? 50; updatePct();
+        qs('#notes').value = d.notes ?? '';
+        compute();
+        return true;
+      }catch(e){ return false; }
+    }
+    qs('#save').addEventListener('click', (e)=>{ e.preventDefault(); saveDraft(); toast('Tarayıcıya kaydedildi'); });
+    qs('#load').addEventListener('click', (e)=>{ e.preventDefault(); loadDraft() ? toast('Yüklendi') : toast('Kayıt bulunamadı'); });
+    qs('#export').addEventListener('click', (e)=>{
+      e.preventDefault();
+      const blob = new Blob([
+        `NGS Gland/Tubule Sonuç
+${new Date().toLocaleString()}
+`+
+        `${scoreEl.textContent}
+${scoreExplain.textContent}
+
+Notlar:
+${qs('#notes').value || ''}`
+      ], {type:'text/plain'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'ngs_gland_tubule_skor.txt';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    // Simple toast
+    const toast = (msg)=>{
+      const t=document.createElement('div');
+      t.textContent=msg; t.style.position='fixed'; t.style.bottom='24px'; t.style.right='24px'; t.style.background='#1a2747'; t.style.border='1px solid #2e4478'; t.style.padding='10px 12px'; t.style.borderRadius='8px'; t.style.color='#e8eefc'; t.style.boxShadow='0 6px 30px rgba(0,0,0,.35)'; t.style.zIndex=9999;
+      document.body.appendChild(t); setTimeout(()=> t.remove(), 1600);
+    };
+
+    // Persist notes changes
+    qs('#notes').addEventListener('input', saveDraft);
+
+    // Init
+    updatePct();
+    loadDraft() || compute();
+  </script>
+</body>
+</html>

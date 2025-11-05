@@ -5,43 +5,334 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>NGS Gland/Tubule Scoring Helper</title>
   <style>
-    :root{
-      --bg:#f5f7fb; --card:#ffffff; --ink:#111827; --muted:#6b7280; --accent:#2563eb; --ok:#059669; --warn:#d97706; --bad:#dc2626;
-      --ring: rgba(37,99,235,.15);
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --accent: #3b82f6;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --ring: rgba(59, 130, 246, 0.15);
+      --border: #e2e8f0;
+      --light-bg: #f1f5f9;
+      --dark-bg: #0f172a;
+      --dark-text: #e2e8f0;
     }
-    *{box-sizing:border-box}
-    body{margin:0;background:#f5f7fb;color:var(--ink);font:500 16px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial} 
-    .wrap{max-width:980px;margin:28px auto;padding:16px}
-    .title{display:flex;gap:12px;align-items:center}
-    h1{font-size:24px;margin:0}
-    .chip{padding:4px 10px;border-radius:999px;background:#192540;color:var(--muted);font-size:12px;border:1px solid #203158}
-    .grid{display:grid;gap:16px}
-    @media(min-width:800px){.grid{grid-template-columns:1fr 1fr}}
-    .card{background:var(--card);border:1px solid #e5e7eb;border-radius:18px;padding:16px;box-shadow:0 6px 20px rgba(17,24,39,.06)}
-    .card h2{margin:0 0 8px;font-size:18px}
-    .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
-    .bgroup{display:flex;flex-wrap:wrap;gap:8px}
-    .btn{cursor:pointer;border:1px solid #d1d5db;background:#f9fafb;color:var(--ink);padding:10px 12px;border-radius:12px;transition:.15s;user-select:none}
-    .btn:hover{border-color:#93c5fd;box-shadow:0 0 0 4px var(--ring)}
-    .btn.on{background:#e0e7ff;border-color:#93c5fd;box-shadow:inset 0 0 0 1px #2563eb}
-    .btn.bad{border-color:#fca5a5;background:#fef2f2}
-    .btn.ok{border-color:#a7f3d0;background:#ecfdf5}
-    .row{display:flex;gap:12px;align-items:center}
-    .slider{accent-color:var(--accent);width:100%}
-    .pill{background:#eef2ff;border:1px solid #e5e7eb;border-radius:999px;padding:6px 10px;color:#374151;font-size:12px}
-    .kbd{font:600 12px/1.2 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background:#eef2ff; border:1px solid #e5e7eb; padding:2px 6px; border-radius:6px}
-    .result{font-size:32px;font-weight:800}
-    .result.small{font-size:22px}
-    .tag{display:inline-block;margin:0 6px 6px 0;padding:6px 10px;border-radius:999px;border:1px solid #e5e7eb;background:#f3f4f6;color:#374151;font-size:12px}
-    details{border:1px solid #e5e7eb;background:#ffffff;border-radius:12px;padding:10px}
-    details summary{cursor:pointer;color:#c6d6ff}
-    .muted{color:var(--muted)}
-    .footer{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
-    .linkbtn{cursor:pointer;padding:10px 12px;border-radius:12px;background:#ffffff;border:1px solid #e5e7eb;color:#1f2937;text-decoration:none}
-    .linkbtn:hover{box-shadow:0 0 0 4px var(--ring); transform: translateY(-1px);}
-    .ok{color:var(--ok)} .warn{color:var(--warn)} .badc{color:var(--bad)}
-    .callout{border-left:4px solid #2563eb;background:#eff6ff;padding:12px;border-radius:8px}
-    .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace}
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .title {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--ink);
+    }
+    
+    .chip {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      align-self: flex-start;
+    }
+    
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+    
+    @media (min-width: 768px) {
+      .title {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin: 0 0 16px;
+    }
+    
+    .bgroup {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    
+    .btn {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--light-bg);
+      color: var(--ink);
+      padding: 10px 16px;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      user-select: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--ring);
+      transform: translateY(-2px);
+    }
+    
+    .btn.on {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+      box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+    }
+    
+    .btn.bad {
+      border-color: var(--bad);
+      background: #fef2f2;
+      color: var(--bad);
+    }
+    
+    .btn.bad.on {
+      background: var(--bad);
+      color: white;
+    }
+    
+    .btn.ok {
+      border-color: var(--ok);
+      background: #ecfdf5;
+      color: var(--ok);
+    }
+    
+    .btn.ok.on {
+      background: var(--ok);
+      color: white;
+    }
+    
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .slider {
+      accent-color: var(--accent);
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+    }
+    
+    .pill {
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    .kbd {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .result {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    
+    .result.small {
+      font-size: 22px;
+    }
+    
+    .tag {
+      display: inline-block;
+      margin: 0 8px 8px 0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--light-bg);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    
+    details {
+      border: 1px solid var(--border);
+      background: var(--light-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+    }
+    
+    details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    
+    .muted {
+      color: var(--muted);
+    }
+    
+    .footer {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .linkbtn {
+      cursor: pointer;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      color: var(--ink);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    
+    .linkbtn:hover {
+      box-shadow: 0 0 0 3px var(--ring);
+      transform: translateY(-2px);
+    }
+    
+    .ok {
+      color: var(--ok);
+    }
+    
+    .warn {
+      color: var(--warn);
+    }
+    
+    .badc {
+      color: var(--bad);
+    }
+    
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: var(--light-bg);
+      padding: 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+    
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      font-family: inherit;
+      font-size: 14px;
+      background: var(--card);
+      color: var(--ink);
+      resize: vertical;
+      transition: border-color 0.2s ease;
+    }
+    
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+    
+    ol, ul {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+    
+    li {
+      margin-bottom: 8px;
+    }
+    
+    b {
+      font-weight: 600;
+    }
+    
+    /* Full width cards on mobile */
+    @media (max-width: 767px) {
+      .card {
+        grid-column: 1 / -1;
+      }
+      
+      .bgroup {
+        justify-content: center;
+      }
+      
+      .footer {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -62,24 +353,25 @@
           <li>Skor ve gerekçeyi kontrol et; notunu yaz.</li>
           <li>Raporuna eklemek için <b>kopyala / dışa aktar</b> kullan.</li>
         </ol>
-        <div class="callout" style="margin-top:8px">
+        <div class="callout" style="margin-top:16px">
           <b>Zor vaka ipuçları (her zaman görünür):</b>
-          <ul style="margin:6px 0 0 18px;color:#374151">
+          <ul style="margin:8px 0 0 20px;color:#374151">
             <li><b>Cribriform</b> ve <b>müsinöz</b> yapılar G/TF kabul edilir; kutupluluk kusursuz olmayabilir.</li>
-            <li><b>Mikropapiller “inverted tubule”</b>: içeride boşluk varsa G/TF; <b>solid ters kutuplu adacık</b> G/TF değildir.</li>
+            <li><b>Mikropapiller "inverted tubule"</b>: içeride boşluk varsa G/TF; <b>solid ters kutuplu adacık</b> G/TF değildir.</li>
             <li><b>Nekroz</b> kaynaklı boşluklar, <b>artefakt</b> çekilmeleri ve <b>papiller</b> yapılar G/TF değildir.</li>
-            <li><b>Yüksek nükleer grade</b> G/TF’yi dışlamaz.</li>
+            <li><b>Yüksek nükleer grade</b> G/TF'yi dışlamaz.</li>
           </ul>
         </div>
       </section>
+      
       <!-- Step 1 -->
       <section class="card">
         <h2>1) Yapı Tanımı</h2>
         <p class="sub">Aşağıdaki özellikleri <b>gözlediğiniz</b> alan için işaretleyin. (Birden çok seçilebilir)</p>
         <div class="bgroup" id="includeGroup"></div>
-        <p class="sub" style="margin-top:10px">G/TF <b>değil</b> sayılacak durumlar</p>
+        <p class="sub" style="margin-top:16px">G/TF <b>değil</b> sayılacak durumlar</p>
         <div class="bgroup" id="excludeGroup"></div>
-        <div class="callout" style="margin-top:12px">
+        <div class="callout" style="margin-top:16px">
           <b>Not:</b> Yüksek nükleer grade veya mitoz sıklığı <span class="muted">G/TF varlığını dışlamaz</span>. Değerlendirme morfolojiye dayanır.
         </div>
       </section>
@@ -91,7 +383,7 @@
         <div class="row">
           <input type="range" min="0" max="100" value="50" class="slider" id="pct" />
         </div>
-        <div class="row" style="justify-content:space-between;margin-top:8px">
+        <div class="row" style="justify-content:space-between;margin-top:12px">
           <span class="pill"><span class="kbd">0–9%</span> Az (&lt;10%)</span>
           <span class="pill"><span class="kbd">10–75%</span> Orta</span>
           <span class="pill"><span class="kbd">&gt;75%</span> Yaygın</span>
@@ -103,7 +395,7 @@
       <!-- Step 3 -->
       <section class="card" style="grid-column:1 / -1">
         <h2>3) Skor ve Gerekçe</h2>
-        <div class="row" style="justify-content:space-between;align-items:flex-end">
+        <div class="row" style="justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px">
           <div>
             <div class="result" id="score">Skor: 2</div>
             <div class="muted" id="scoreExplain">Oran: %50 · Dahil edilen paternler: cribriform</div>
@@ -113,15 +405,15 @@
             <button class="btn" id="reset">Sıfırla</button>
           </div>
         </div>
-        <div style="margin-top:12px">
+        <div style="margin-top:16px">
           <span class="tag" id="tag-gtf">G/TF bekleniyor</span>
           <span class="tag" id="tag-risk">Zor vaka: müsinöz / mikropapiller olabilir</span>
         </div>
-        <div class="callout" style="margin-top:12px">
+        <div class="callout" style="margin-top:16px">
           <b>Zor vaka ipuçları</b>
           <ul class="muted" style="color:#374151">
             <li><b>Cribriform</b> ve <b>müsinöz</b> paternler sıklıkla G/TF kabul edilir; polarizasyon kusursuz olmak zorunda değildir.</li>
-            <li><b>Mikropapiller “inverted tubule”</b>: iç boşluk varsa G/TF kabul edilir. Solid ters kutuplu adacıklar G/TF değildir.</li>
+            <li><b>Mikropapiller "inverted tubule"</b>: iç boşluk varsa G/TF kabul edilir. Solid ters kutuplu adacıklar G/TF değildir.</li>
             <li><b>Nekroz</b> kaynaklı boşluklar, <b>artefakt</b> aralıkları ve <b>papiller</b> yapılar G/TF değildir.</li>
             <li><b>Yüksek nükleer grade/mitoz</b> varlığı G/TF değerlendirmesini değiştirmez.</li>
           </ul>
@@ -137,23 +429,23 @@
       <section class="card" style="grid-column:1 / -1">
         <h2>Mikroskopik Tipler ve Literatür Özellikleri</h2>
         <div class="sub" style="font-size:15px;color:#374151">Genişletilmiş G/TF tanımı ve doğrulama çalışmasının bulgularına göre özet.</div>
-        <ul style="margin-top:10px;color:#374151">
+        <ul style="margin-top:12px;color:#374151">
           <li><b>Basit tübül/acinus:</b> Açık lümen, çevresinde (kısmi de olsa) polarize tümör hücreleri. Genelde düşük/orta nükleer grade ile yüksek uyum.</li>
           <li><b>Kompleks/Cribriform:</b> Adacık içinde birden çok yuvarlak/oval lümen; lümenler üç boyutta küresel olabilir; çoğu durumda G/TF kabul edilir.</li>
           <li><b>Müsinöz:</b> Lümenler sıklıkla belirgin polarizasyon göstermez; buna rağmen lümen varlığıyla G/TF olarak değerlendirilir; sınıflamada zorlayıcı olabilir.</li>
           <li><b>Mikropapiller (inverted tubule):</b> Hücre apeksleri dışa bakar; <u>iç boşluk</u> varsa G/TF; sadece ters kutuplu <u>solid</u> kümeler G/TF <b>değildir</b>.</li>
-          <li><b>Yüksek nükleer grade’li lümenler:</b> Grade yüksek olsa da lümen/polarizasyon mevcutsa G/TF kabul edilir.</li>
+          <li><b>Yüksek nükleer grade'li lümenler:</b> Grade yüksek olsa da lümen/polarizasyon mevcutsa G/TF kabul edilir.</li>
           <li><b>Non-G/TF – solid + nekroz:</b> Merkez nekrozla oluşan boşluklar tipik olarak G/TF <b>değildir</b> (gerçek lümen içinde nekrotik debris nadir).</li>
           <li><b>Non-G/TF – papiller:</b> Fibrovasküler kor içeren papiller yapılar G/TF <b>değildir</b>.</li>
           <li><b>Non-G/TF – artefakt (retraksiyon):</b> Fiksasyon/işleme kaynaklı çekilme aralıkları G/TF <b>değildir</b>.</li>
-          <li><b>Non-G/TF – intrasitoplazmik lümen/vakuol:</b> “Signet-ring” benzeri vakuoller G/TF <b>değildir</b>.</li>
+          <li><b>Non-G/TF – intrasitoplazmik lümen/vakuol:</b> "Signet-ring" benzeri vakuoller G/TF <b>değildir</b>.</li>
         </ul>
       </section>
 
       <!-- Notes -->
       <section class="card" style="grid-column:1 / -1">
         <h2>Serbest Not</h2>
-        <textarea id="notes" rows="5" style="width:100%;background:#0e1628;border:1px solid #223256;border-radius:12px;color:var(--ink);padding:10px;font:500 14px ui-sans-serif"></textarea>
+        <textarea id="notes" rows="5" placeholder="Buraya notlarınızı yazabilirsiniz..."></textarea>
       </section>
     </div>
   </div>
@@ -165,7 +457,7 @@
       {id:'polarity', label:'Polarizasyon (+/kısmi)'},
       {id:'crib', label:'Cribriform'},
       {id:'mucin', label:'Müsinöz'},
-      {id:'invTub', label:'Mikropapiller “inverted tubule”'},
+      {id:'invTub', label:'Mikropapiller "inverted tubule"'},
     ];
     const EXCLUDE = [
       {id:'nec', label:'Nekroz kaynaklı boşluk'},
@@ -195,7 +487,13 @@
     // Quick %-buttons
     const quick = [9, 25, 50, 80, 90];
     const quickWrap = qs('#quickPcts');
-    quick.forEach(v=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=v+'%'; b.addEventListener('click',()=>{pct.value=v; updatePct(); compute();}); quickWrap.appendChild(b); });
+    quick.forEach(v=>{ 
+      const b=document.createElement('button'); 
+      b.className='btn'; 
+      b.textContent=v+'%'; 
+      b.addEventListener('click',()=>{pct.value=v; updatePct(); compute();}); 
+      quickWrap.appendChild(b); 
+    });
 
     // Slider
     const pct = qs('#pct');
@@ -312,8 +610,20 @@ ${qs('#notes').value || ''}`
     // Simple toast
     const toast = (msg)=>{
       const t=document.createElement('div');
-      t.textContent=msg; t.style.position='fixed'; t.style.bottom='24px'; t.style.right='24px'; t.style.background='#1a2747'; t.style.border='1px solid #2e4478'; t.style.padding='10px 12px'; t.style.borderRadius='8px'; t.style.color='#e8eefc'; t.style.boxShadow='0 6px 30px rgba(0,0,0,.35)'; t.style.zIndex=9999;
-      document.body.appendChild(t); setTimeout(()=> t.remove(), 1600);
+      t.textContent=msg; 
+      t.style.position='fixed'; 
+      t.style.bottom='24px'; 
+      t.style.right='24px'; 
+      t.style.background='#1a2747'; 
+      t.style.border='1px solid #2e4478'; 
+      t.style.padding='12px 16px'; 
+      t.style.borderRadius='8px'; 
+      t.style.color='#e8eefc'; 
+      t.style.boxShadow='0 6px 30px rgba(0,0,0,.35)'; 
+      t.style.zIndex=9999;
+      t.style.fontWeight='500';
+      document.body.appendChild(t); 
+      setTimeout(()=> t.remove(), 1600);
     };
 
     // Persist notes changes
